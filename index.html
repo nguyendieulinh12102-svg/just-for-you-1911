@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#faeee8">
+<title>Một lá thư dành cho bạn</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Playfair+Display:wght@400;500&display=swap');
+:root{--wine:#6f1728;--paper:#fffdf9;--rose:#f8e9e4;--ink:#493b38}
+*{box-sizing:border-box}
+body{margin:0;min-height:100svh;overflow:hidden;font-family:'Playfair Display',serif;color:var(--ink);background:radial-gradient(ellipse at 50% 48%,#fff8f3 0,#faeee8 56%,#f7e6e1 100%);display:grid;place-items:center}
+body:before,body:after{content:"✿  ❀  ✽  ✿  ❁  ✿";position:fixed;left:-12px;right:-12px;color:#d9a5a6;opacity:.42;font-size:clamp(22px,5vw,42px);letter-spacing:14px;filter:blur(1px);pointer-events:none}
+body:before{top:12px;transform:rotate(-5deg)}body:after{bottom:12px;transform:rotate(4deg)}
+.scene{width:min(92vw,480px);height:min(76vh,650px);display:grid;place-items:center;position:relative}
+.envelope-wrap{position:relative;width:min(72vw,290px);height:150px;cursor:pointer;filter:drop-shadow(0 16px 18px #6b443322);transition:transform .35s}
+.envelope-wrap:hover{transform:translateY(-5px)}
+.envelope{position:absolute;inset:0;background:#d9ae7d;border-radius:8px;overflow:hidden}
+.envelope:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,#e7c59a,#c99560);clip-path:polygon(0 0,50% 58%,100% 0)}
+.flap{position:absolute;inset:0;background:#e5bf91;clip-path:polygon(0 0,100% 0,50% 66%);transform-origin:top;transition:transform .7s;z-index:3}
+.pocket{position:absolute;inset:0;background:linear-gradient(35deg,#c99560,#e5bf91);clip-path:polygon(0 100%,0 0,50% 58%,100% 0,100% 100%);z-index:2}
+.seal{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-20%);width:42px;height:42px;border-radius:50%;background:var(--wine);color:#fff;display:grid;place-items:center;font-size:21px;box-shadow:0 3px 8px #5c102b55}
+.flower{position:absolute;font-size:32px;z-index:0}.f1{right:0;top:-28px}.f2{left:-24px;bottom:20px}
+.hint{position:absolute;bottom:-52px;width:100%;text-align:center;font-size:13px;color:#8e6b67;letter-spacing:.04em}
+.controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid #e8d2c9;border-radius:30px;background:#fff8f0cc;backdrop-filter:blur(12px);box-shadow:0 5px 20px #6b443311;white-space:nowrap}
+.control{border:0;background:#f2e0d7;color:#573b39;border-radius:20px;padding:8px 11px;font:13px 'Playfair Display',serif;cursor:pointer}
+.play{background:var(--wine);color:white;width:34px;height:34px;border-radius:50%;padding:0;font-size:15px}
+.heart{position:fixed;bottom:24px;left:18px;width:44px;height:44px;border:0;border-radius:50%;background:var(--wine);color:white;font-size:20px;box-shadow:0 5px 14px #6b172833}
+.modal{position:fixed;inset:0;background:#3b29294d;backdrop-filter:blur(8px);display:none;place-items:center;padding:18px;z-index:10}
+.modal.show{display:grid;animation:fade .3s}
+.letter{width:min(100%,430px);max-height:82svh;overflow:auto;background:var(--paper);border:1px solid #eadbd4;border-radius:24px;box-shadow:0 18px 55px #39211f33;animation:rise .45s}
+.letter-head{padding:17px 20px 12px;border-bottom:1px solid #f0e5df;display:flex;justify-content:space-between;align-items:center;color:var(--wine);font:600 25px 'Dancing Script',cursive}
+.close{border:0;background:#f5e9e5;color:#60434a;border-radius:50%;width:34px;height:34px;font-size:19px;cursor:pointer}
+.letter-body{padding:20px 23px 28px}
+h1{font:600 32px 'Dancing Script',cursive;color:var(--wine);margin:0 0 15px}
+.message{font-size:16px;line-height:1.95;white-space:pre-line;text-indent:1.2em}
+.signature{font:600 25px 'Dancing Script',cursive;color:var(--wine);text-align:right;margin-top:25px}
+.small-note{text-align:center;color:#b18b82;font-size:11px;margin-top:20px}
+@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes rise{from{transform:translateY(18px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+@media(max-height:650px){.scene{height:65vh}.controls{bottom:12px}.heart{bottom:14px}}
+</style>
+</head>
+<body>
+<main class="scene">
+  <span class="flower f1">🌼</span><span class="flower f2">🌸</span>
+  <div class="envelope-wrap" id="openLetter" role="button" tabindex="0" aria-label="Mở thư">
+    <div class="envelope"></div><div class="flap"></div><div class="pocket"></div>
+    <div class="seal">♥</div><div class="hint">Chạm vào trái tim để mở thư</div>
+  </div>
+</main>
+<button class="heart" id="heart" aria-label="Mở thư">♥</button>
+<div class="controls">
+  <button class="control play" id="play" aria-label="Phát nhạc">▶</button>
+  <span style="font-size:13px;color:#8d5b5e">♫</span>
+  <button class="control" id="changeSong">♫ Đổi nhạc</button>
+  <button class="control" id="save">💾 Lưu thiệp</button>
+</div>
+<audio id="music" loop preload="none"></audio>
+<input id="audioFile" type="file" accept="audio/*" hidden>
+<div class="modal" id="modal">
+  <article class="letter">
+    <header class="letter-head"><span id="topTitle">Cho bạn,</span><button class="close" id="close">×</button></header>
+    <div class="letter-body">
+      <h1 id="greeting">Gửi bạn thương,</h1>
+      <div class="message" id="message">Có những điều đôi khi thật khó nói thành lời, nên mình viết chúng vào lá thư nhỏ này.
+
+Cảm ơn vì đã xuất hiện và làm những ngày bình thường trở nên đáng nhớ hơn. Mong rằng khi đọc những dòng này, bạn sẽ mỉm cười một chút.
+
+Chúc bạn luôn bình an, vui vẻ và gặp thật nhiều dịu dàng trên hành trình của mình.</div>
+      <div class="signature" id="signature">Thương mến, ♡</div>
+      <div class="small-note">Một lá thư nhỏ, gửi riêng cho bạn</div>
+    </div>
+  </article>
+</div>
+<script>
+/* TÙY CHỈNH LỜI NHẮN TẠI ĐÂY */
+const CONFIG = {
+  recipient: "Sơn Tùng",
+  greeting: "Gửi bạn thương,",
+  message: `Nhân một ngày đặc biệt dành cho phái mạnh, muốn gửi đến cậu một lá thư nhỏ thay cho những lời chúc đôi khi chẳng biết bắt đầu từ đâu.
+
+Chúc cậu luôn mạnh mẽ nhưng cũng đừng quên dành cho bản thân những khoảng thời gian thật dịu dàng. Mong cậu luôn đủ tự tin để theo đuổi những điều mình mong muốn, đủ kiên nhẫn để đi qua những ngày không dễ dàng và luôn có thật nhiều niềm vui trên hành trình Gymer của mình hehe.
+
+Cảm ơn vì đã mang tới tui nhiều tiếng cười và làm những ngày bình thường trở nên đáng nhớ hơn. Mong rằng khi đọc những dòng này, cậu sẽ mỉm cười một chút như tớ vẫn mỉm cười mỗi khi thấy tin nhắn cậu. Tớ biết đôi khi mình hơi vội vàng, có những điều muốn biết câu trả lời sớm quá mà vô tình khiến mọi thứ trở nên không được tự nhiên như ban đầu. Nhưng mà, tớ vẫn rất trân trọng những điều dễ thương mà hai đứa đã có. Vậy nên, hy vọng chúng mình vẫn còn cơ hội để chậm lại một chút, thoải mái hơn một chút, dành thời gian hiểu nhau thêm và cứ để mọi thứ diễn ra thật tự nhiên nhé.
+
+Hy vọng cậu sẽ có thật nhiều trải nghiệm đáng nhớ, những chuyến đi thú vị, những ước mơ được thực hiện và những người thật lòng yêu thương cậu.
+
+À, hôm nay là ngày của cậu, nên tạm gác những chuyện suy nghĩ vón cục sang một bên đi. Chúc cậu một ngày 19/11 thật vui. Và mong rằng không chỉ hôm nay, mà cả những ngày bình thường sau này, cậu cũng luôn cảm nhận được rằng mình xứng đáng với những điều tử tế nhấtvà vẫn lại kể nhiều chuyện cho tớ nghe....`,
+  signature: "Thương mến, ♡",
+  // Đặt đường dẫn file nhạc MP3 đã tải lên cùng website, ví dụ: "music.mp3"
+  musicUrl: ""
+};
+document.title = `Một lá thư dành cho ${CONFIG.recipient}`;
+document.getElementById('topTitle').textContent = `Cho ${CONFIG.recipient},`;
+document.getElementById('greeting').textContent = CONFIG.greeting;
+document.getElementById('message').textContent = CONFIG.message;
+document.getElementById('signature').textContent = CONFIG.signature;
+const modal=document.getElementById('modal'), audio=document.getElementById('music'), play=document.getElementById('play');
+audio.src=CONFIG.musicUrl;
+function open(){modal.classList.add('show')}
+function close(){modal.classList.remove('show')}
+document.getElementById('openLetter').addEventListener('click',open);
+document.getElementById('openLetter').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+document.getElementById('heart').addEventListener('click',open);
+document.getElementById('close').addEventListener('click',close);
+modal.addEventListener('click',e=>{if(e.target===modal)close()});
+play.addEventListener('click',async()=>{if(!audio.src){document.getElementById('audioFile').click();return}if(audio.paused){try{await audio.play();play.textContent='Ⅱ'}catch(e){alert('Không phát được nhạc. Hãy kiểm tra file nhạc.')}}else{audio.pause();play.textContent='▶'}});
+document.getElementById('changeSong').addEventListener('click',()=>document.getElementById('audioFile').click());
+document.getElementById('audioFile').addEventListener('change',e=>{const f=e.target.files[0];if(f){audio.src=URL.createObjectURL(f);audio.play().then(()=>play.textContent='Ⅱ').catch(()=>{});}});
+document.getElementById('save').addEventListener('click',()=>window.print());
+</script>
+</body>
+</html>
